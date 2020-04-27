@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression, LassoCV
+from sklearn.svm import LinearSVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import sklearn.metrics as metrics
@@ -69,7 +70,7 @@ def subtask1(X_train, y_train, X_test):
     for test in TESTS:
         y = y_train[test]
 
-        model = LogisticRegression(random_state=42).fit(X_train, y)
+        model = LogisticRegression(random_state=42, solver='liblinear').fit(X_train, y)
         y_pred.append(model.predict_proba(X_test)[:,1])
 
     return pd.DataFrame(np.transpose(y_pred), columns=TESTS, index=X_test.index)
@@ -78,7 +79,7 @@ def subtask2(X_train, y_train, X_test):
 
     y = y_train[('LABEL_Sepsis')]
 
-    model = LogisticRegression(random_state=42).fit(X_train, y)
+    model = LogisticRegression(random_state=42, solver='liblinear').fit(X_train, y)
     y_pred = model.predict_proba(X_test)[:,1]
 
     return pd.DataFrame(np.transpose(y_pred), columns=['LABEL_Sepsis'], index=X_test.index)
