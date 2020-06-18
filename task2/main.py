@@ -86,8 +86,6 @@ def subtask1(X_train, y_train, X_test, y_test):
 
         print(test, model.score(X_test, y_val))
         print('-'*60)
-
-    print(coeff_df)
     return pd.DataFrame(np.transpose(y_pred), columns=TESTS, index=X_test.index)
 
 def subtask2(X_train, y_train, X_test):
@@ -97,9 +95,7 @@ def subtask2(X_train, y_train, X_test):
     parameters = {'max_features': [1, 2, 3],
                   'max_depth': [80, 90, 100, 110]}
     rf = RandomForestClassifier(random_state=42)
-    # model = GridSearchCV(rf, parameters, cv=5)
 
-    # model = RandomForestClassifier(random_state=42).fit(X_train, y)
     model = rf.fit(X_train, y)
     y_pred = model.predict_proba(X_test)[:,1]
 
