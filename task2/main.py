@@ -2,14 +2,19 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression, LassoCV
 from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 import sklearn.metrics as metrics
 
 VITALS = ['LABEL_RRate', 'LABEL_ABPm', 'LABEL_SpO2', 'LABEL_Heartrate']
 TESTS = ['LABEL_BaseExcess', 'LABEL_Fibrinogen', 'LABEL_AST', 'LABEL_Alkalinephos', 'LABEL_Bilirubin_total',
          'LABEL_Lactate', 'LABEL_TroponinI', 'LABEL_SaO2',
          'LABEL_Bilirubin_direct', 'LABEL_EtCO2']
+
+VARIABLES = ['BaseExcess', 'Fibrinogen', 'AST', 'Alkalinephos', 'Bilirubin_total', 'Lactate', 'TroponinI', 
+             'SaO2','Bilirubin_direct', 'EtCO2', 'Temp', 'RRate', 'FiO2', 'Glucose', 'ABPm', 'Potassium', 
+             'ABPd', 'SpO2', 'Hct', 'Heartrate', 'ABPs', 'pH']
 
 # data
 train_features = pd.read_csv('train_features.csv')
@@ -58,28 +63,44 @@ def feature_engineer(data):
 
     TODO implement data imputation and find a way to group data per pacient
     """
-    data = (data.groupby('pid').mean()).fillna(data.median())
-    data = data.drop('Time', axis=1).sort_values(by='pid')
+    data = (data.groupby('pid').median()).fillna(data.median())
+    data = data[VARIABLES].sort_values(by='pid')
 
     scaler = StandardScaler()
-    return pd.DataFrame(scaler.fit_transform(data), index=data.index)
+    return pd.DataFrame(scaler.fit_transform(data), index=data.index, columns=data.columns)
 
-def subtask1(X_train, y_train, X_test):
+def subtask1(X_train, y_train, X_test, y_test):
     y_pred = []
-
+    coeff_df = pd.DataFrame(X_train.columns)
+    coeff_df.columns = ['Feature']
+                  
     for test in TESTS:
         y = y_train[test]
+        y_val = y_test[test]
 
-        model = LogisticRegression(random_state=42, solver='liblinear').fit(X_train, y)
+        model = RandomForestClassifier(random_state=42).fit(X_train, y)
+
         y_pred.append(model.predict_proba(X_test)[:,1])
 
+        coeff_df["Correlation" + test] = pd.Series(model.feature_importances_)
+
+        print(test, model.score(X_test, y_val))
+        print('-'*60)
+
+    print(coeff_df)
     return pd.DataFrame(np.transpose(y_pred), columns=TESTS, index=X_test.index)
 
 def subtask2(X_train, y_train, X_test):
 
     y = y_train[('LABEL_Sepsis')]
 
-    model = LogisticRegression(random_state=42, solver='liblinear').fit(X_train, y)
+    parameters = {'max_features': [1, 2, 3],
+                  'max_depth': [80, 90, 100, 110]}
+    rf = RandomForestClassifier(random_state=42)
+    # model = GridSearchCV(rf, parameters, cv=5)
+
+    # model = RandomForestClassifier(random_state=42).fit(X_train, y)
+    model = rf.fit(X_train, y)
     y_pred = model.predict_proba(X_test)[:,1]
 
     return pd.DataFrame(np.transpose(y_pred), columns=['LABEL_Sepsis'], index=X_test.index)
@@ -107,7 +128,7 @@ def evaluate_performance(X, y):
     """
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    labels_tests = subtask1(X_train, y_train, X_test)
+    labels_tests = subtask1(X_train, y_train, X_test, y_test)
     label_sepsis = subtask2(X_train, y_train, X_test)
     labels_vitals = subtask3(X_train, y_train, X_test)
 
