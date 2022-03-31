@@ -1,0 +1,41 @@
+\section*{Useful math}
+
+\subsection*{Probabilities}
+$\mathbb{E}_x[X] = \begin{cases}
+   \int x \cdot p(x) \partial x  & \text{if continuous}\\
+   \sum_x x \cdot p(x) & \text{otherwise}
+  \end{cases}$\\
+$\operatorname{Var}[X] = \mathbb{E}[(X-\mu_X)^2] = \mathbb{E}[X^2] - \mathbb{E}[X]^2$\\
+$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$; $p(Z|X,\theta) = \frac{p(X,Z|\theta)}{p(X|\theta)}$\\
+$P(x,y) = P(y|x) \cdot  P(x) = P(x|y) \cdot P(y)$
+
+\subsection*{Bayes Rule}
+$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$
+
+\subsection*{P-Norm}
+$||x||_p = (\sum_{i=1}^n|x_i|^p)^{\frac{1}{p}}$, $1 \leq p < \infty$
+
+\subsection*{Some gradients}
+$\nabla_x ||x||_2^2 = 2 x$\\
+$f(x) = x^T A x$; $\nabla_x f(x) = (A + A^T) x$\\
+E.g. $\nabla_w \operatorname{log}(1+\operatorname{exp(-y w^T x)}) = \\
+\frac{1}{1+\operatorname{exp}(-y w^T x)} \cdot \operatorname{exp}(-y w^T x) \cdot (-y x) = \\
+\frac{1}{1 + \operatorname{exp}(y w^T x)} \cdot(-yx)$
+
+\subsection*{Convex / Jensen's inequality}
+$\text{g(x) convex} \Leftrightarrow g''(x) > 0 \Leftrightarrow x_1,x_2 \in \mathbb{R}, \lambda \in [0,1]: 
+g(\lambda x_1 + (1-\lambda) x_2) \leq \lambda g(x_1) + (1-\lambda) g(x_2)$
+
+\subsection*{Gaussian / Normal Distribution}
+$f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} exp(-\frac{(x-\mu)^2}{2\sigma^2})$
+
+\subsection*{Multivariate Gaussian}
+$\Sigma =$ covariance matrix, $\mu$ = mean\\
+$f(x) = \frac{1}{2\pi \sqrt{|\Sigma|}} e^{- \frac{1}{2} (x-\mu)^T \Sigma^{-1} (x-\mu)}$\\
+Empirical: $\hat{\Sigma} = \frac{1}{n}\sum_{i=1}^n x_i x_i^T$ (needs centered data points)
+
+\subsection*{Positive semi-definite matrices}
+$M \in \mathbb{R}^{n\times n}$ is psd $\Leftrightarrow$\\
+$\forall x \in \mathbb{R}^n: x^TMx \geq 0 \Leftrightarrow$\\
+all eigenvalues of $M$ are positive: $\lambda_i\geq 0$
+

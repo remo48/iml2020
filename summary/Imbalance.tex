@@ -1,0 +1,13 @@
+\section*{Imbalance}
+
+\subsection*{Cost Sensitive Classification}
+Replace loss by: $l_{CS}(w;x,y) = c_y l(w;x,y)$
+
+\subsection*{Metrics}
+$n = n_+ + n_-$, $n_+ = TP + FN$, $n_- = TN + FP$\\
+Accuracy: $\frac{TP+TN}{n}$, 
+Precision: $\frac{TP}{TP+FP}$\\ 
+Recall/TPR: $\frac{TP}{n_+}$, 
+FPR: $ \frac{FP}{n_-}$\\
+F1 score: $\frac{2TP}{2TP+FP+FN}$\\
+ROC Curve: $y = $TPR, $x = $FPR
